@@ -1,2 +1,17 @@
 {% extends "base.html" %}
-gi
+{% block content %}
+
+
+  {% if user.is_authenticated %}
+    <p>Welcome, {{ user.username }}. Thanks for logging in.</p>
+<div class="input-group mb-3">
+  <input type="text" class="form-control" placeholder="Search for your next movie" aria-label="Recipient's username" aria-describedby="button-addon2">
+  <div class="input-group-append">
+    <button class="btn btn-success" type="button" id="button-addon2">Search</button>
+  </div>
+</div>
+{% else %}
+    <p>Welcome, new user. Please log in.</p>
+{% endif %}
+
+{% endblock %}

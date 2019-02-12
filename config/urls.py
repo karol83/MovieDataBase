@@ -4,14 +4,22 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.views.generic import TemplateView
 from django.views import defaults as default_views
+from movies import views
 
 urlpatterns = [
-    path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
+    path("", views.home, name="home"),
+    path(
+        "favourites/",
+        views.FavouriteMoviesList.as_view(),
+        name="list_of_favourites"),
     path(
         "about/",
         TemplateView.as_view(template_name="pages/about.html"),
-        name="about",
-    ),
+        name="about"),
+    path(
+        "omdbapi/<slug:title>",
+        views.omdbapi_api_view,
+        name="omdb_api"),
     # Django Admin, use {% url 'admin:index' %}
     path(settings.ADMIN_URL, admin.site.urls),
     # User management

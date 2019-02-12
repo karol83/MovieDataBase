@@ -252,3 +252,6 @@ SOCIALACCOUNT_ADAPTER = 'movie_database.users.adapters.SocialAccountAdapter'
 
 # Your stuff...
 # ------------------------------------------------------------------------------
+OMDBAPI_URL = env.str('OMDBAPI_URL', default='http://www.omdbapi.com/')
+OMDBAPI_KEY = env.str('APIKEY', default='0')
+
