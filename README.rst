@@ -73,19 +73,28 @@ Getting started
 
 Change into the postgres user
 
-`sudo -u postgres psql postgres`
+    `sudo -u postgres psql postgres`
 
 Set a password for your `postgres` user:
 
-`\password postgres`
+    `\password postgres`
 
 Create the database
 
-`sudo -u postgres psql -c 'create database movie_database'`
+    `sudo -u postgres psql -c 'create database movie_database'`
 
 Add user permissions for your user
 
-`sudo -u postgres psql -c 'grant all privileges on database movie_database to postgres;'`
+    `sudo -u postgres psql -c 'grant all privileges on database movie_database to postgres;'`
+
+
+Google & Facebook login
+-----------------------
+
+1. Run migrations
+2. Createsuperuser account: `python manage.py createsuperuser`
+3. For each OAuth based provider, add a Social App (socialaccount app).
+4. Fill in the site and the OAuth app credentials obtained from the provider.
 
 
 Deployment
