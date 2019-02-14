@@ -3,7 +3,7 @@
 {% load bootstrap4 %}
 
 {% block content %}
-  <a href="{% url 'home' %}" class="btn btn-primary btn-sm" >{% trans 'Go back' %}</a>
+  <a href="{% url 'home' %}" class="btn btn-primary btn-sm" ><i class="fas fa-angle-left"></i> {% trans 'Back to search' %}</a>
   <br>
   {% if form %}
 
