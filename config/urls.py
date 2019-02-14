@@ -17,8 +17,8 @@ urlpatterns = [
         TemplateView.as_view(template_name="pages/about.html"),
         name="about"),
     path(
-        "omdbapi/<slug:title>",
-        views.omdbapi_api_view,
+        "result/",
+        views.show_movie_details_view,
         name="omdb_api"),
     # Django Admin, use {% url 'admin:index' %}
     path(settings.ADMIN_URL, admin.site.urls),

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load bootstrap4 %}
+
+{% block content %}
+  <a href="{% url 'home' %}" class="btn btn-primary btn-sm" >{% trans 'Go back' %}</a>
+  <br>
+  {% if form %}
+
+    <h1>{{ data.Title }}</h1><small>{{ data.Year }}</small>
+    <h4>{% trans 'Release date:' %} {{ data.Released }}</h4>
+    {% for key, item in data.items %}
+      <div class="row">
+        <div class="col-1">
+          {% trans key %}
+        </div>
+        <div class="col">
+          {% if key == 'Website' or  key == 'Poster'%}
+            {{ item|urlize }}
+          {% else %}
+            {{ item }}
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+
+  {% else %}
+    <h2> {% trans 'Sorry, movie not found!' %}</h2>
+    <p><a href="{% url 'home' %}">{% trans 'Go back and try again' %}</a></p>
+  {% endif %}
+  <br>
+{% endblock %}
