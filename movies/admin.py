@@ -1,4 +1,4 @@
 from django.contrib import admin
-from .models import FavouriteMovie
+from .models import Movie
 
-admin.site.register(FavouriteMovie)
+admin.site.register(Movie)

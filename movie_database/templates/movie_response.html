@@ -1,12 +1,16 @@
 {% extends 'base.html' %}
 {% load i18n %}
 {% load bootstrap4 %}
+{% load static %}
 
 {% block content %}
+  <form action="{% url 'add_favourite' %}" method="post">
+  {% csrf_token %}
   <a href="{% url 'home' %}" class="btn btn-primary btn-sm" ><i class="fas fa-angle-left"></i> {% trans 'Back to search' %}</a>
+  <button href="{% url 'add_favourite'%}" type="submit" class="btn btn-success btn-sm" id="addToFavouriteButton"><i class="far fa-star"></i> {% trans 'Add to favourites' %} </button>
   <br>
-  {% if form %}
-
+  <br>
+  {% if data %}
     <h1>{{ data.Title }}</h1>
     {% for key, item in data.items %}
       <div class="row">
@@ -14,11 +18,14 @@
           {% trans key %}
         </div>
         <div class="col">
-          {% if key == 'Website' or  key == 'Poster'%}
+          {% if key == 'Website' %}
             {{ item|urlize }}
+            {% elif key == 'Poster' %}
+            <img src="{{ item }}">
           {% else %}
             {{ item }}
           {% endif %}
+
         </div>
       </div>
     {% endfor %}
@@ -28,4 +35,5 @@
     <p><a href="{% url 'home' %}">{% trans 'Go back and try again' %}</a></p>
   {% endif %}
   <br>
+  </form>
 {% endblock %}

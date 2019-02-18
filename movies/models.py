@@ -1,106 +1,53 @@
+import requests
+
 from django.db import models
 from django.utils.translation import gettext as _
+from django.contrib.postgres.fields import JSONField
 from django.conf import settings
 
 
 class Ratings(models.Model):
-    source = models.CharField(
+    Source = models.CharField(
         max_length=255,
         verbose_name=_("Rating source"))
-    value = models.CharField(
+    Value = models.CharField(
         max_length=255,
         verbose_name=_("Rating value"))
 
     def __str__(self):
-        return " ".join(self.source, self.value)
+        return "%s: %s" % (self.Source, self.Value)
 
 
-class FavouriteMovie(models.Model):
-    Title = models.CharField(
-        max_length=255,
-        verbose_name=_("Movie Title"))
-    Year = models.DateField(
-        verbose_name=_("Movie Relase Year"))
-    Released = models.DateTimeField(
-        verbose_name=_("Movie Release Date"))
-    Runtime = models.CharField(
-        blank=True,
-        max_length=255,
-        verbose_name=_("Movie Runtime"))
-    Genre = models.CharField(
-        max_length=255,
-        blank=True,
-        verbose_name=_("Movie Genre"))
-    Director = models.CharField(
-        max_length=255,
-        blank=True,
-        verbose_name=_("Movie Director"))
-    Actors = models.CharField(
-        max_length=255,
-        blank=True,
-        verbose_name=_("Actors"))
-    Plot = models.TextField(
-        blank=True,
-        verbose_name=_("Movie plot"))
-    Language = models.CharField(
-        max_length=255,
-        blank=True,
-        verbose_name=_("Language"))
-    Country = models.CharField(
-        max_length=255,
-        blank=True,
-        verbose_name=_("Country"))
-    Awards = models.CharField(
-        max_length=255,
-        blank=True,
-        verbose_name=('Awards'))
-    Poster = models.URLField(
-        blank=True,
-        verbose_name=_("Link to poster URL"))
-    Ratings = models.ManyToManyField(Ratings)
-    Metascore = models.PositiveSmallIntegerField(
-        blank=True,
-        verbose_name=_("Metascore"))
-    imdbRating = models.DecimalField(
-        blank=True,
-        max_digits=4,
-        decimal_places=2,
-        verbose_name=_("IMDB Rating"))
-    imdbVotes = models.CharField(
-        blank=True,
-        max_length=15,
-        verbose_name=_("IMDB Votes"))
-    imdbID = models.CharField(
-        max_length=31,
-        blank=True,
-        verbose_name=_("IMDB ID"))
-    Type = models.CharField(
-        max_length=50,
-        blank=True,
-        verbose_name=_("Type"))
-    DVD = models.CharField(
-        max_length=255,
-        blank=True,
-        verbose_name=_("DVD Release Date"))
-    BoxOffice = models.CharField(
-        max_length=255,
-        blank=True,
-        verbose_name=_("Box office"))
-    Production = models.CharField(
-        max_length=255,
-        blank=True,
-        verbose_name=_("Production Company"))
-    Website = models.URLField(
-        blank=True,
-        verbose_name=_("Movie website"))
-    Response = models.BooleanField()
+class Movie(models.Model):
+    title = models.CharField(max_length=255)
+    data = JSONField(null=True)
+
+    @staticmethod
+    def get_movie_from_api(self, title, max_retries):
+        attempt_number = 0
+        while attempt_number < max_retries:
+            payload = {'apikey': settings.OMDBAPI_KEY, 't': title}
+            print('sending request')
+            r = requests.get(settings.OMDBAPI_URL, params=payload, timeout=10)
+            print('request sent')
+            if r.status_code == 200:
+                print('request returend with 200')
+                data = r.json()
+                print(data)
+
+                if data.get('Response') == 'True':
+                    movie = Movie.objects.get_or_create(title=data.get('Title'), data=data)
+                    print('movie created where movie.data == ')
+                    return data
+            if r.status_code == 401:
+                attempt_number += 1
+                print('I cannot login - please check your KEY settings')
+            else:
+                print('There was a problem with fetching the movie!')
+                attempt_number += 1
 
     movie_added_on_datetime = models.DateTimeField(auto_now_add=True)
     movie_last_accessed_datetime = models.DateTimeField(auto_now=True)
-    created_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-    )
 
     def __str__(self):
-        return " ".join(self.movie_title, self.release_year)
+        return "%s" % self.title

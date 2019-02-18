@@ -1,19 +1,23 @@
 import requests
 import time
-from rest_framework import status
-from rest_framework.response import Response
 
-from movies.models import FavouriteMovie
-
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.views.generic import ListView
+from django.views.generic.edit import FormView
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 
-from .forms import SearchMovieForm, MovieResult
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.parsers import JSONParser
 
-MAX_RETRIES = 5
+from .forms import SearchMovieForm, MovieForm
+from .serializers import MovieSerializer, RatingsSerializer
+from .models import Movie, Ratings
+
+MAX_RETRIES = 3
 
 
 def home(request):
@@ -21,32 +25,30 @@ def home(request):
     return render(request, "pages/home.html", {'form': search_form})
 
 
+class FileSearchView(LoginRequiredMixin, FormView):
+    template_name = 'pages/home.html'
+    form_class = SearchMovieForm
+    success_url = '/result/'
+
+    def form_valid(self, movie_form):
+        movie = Movie()
+        data = movie.get_movie_from_api(movie_form.cleaned_data['title'], MAX_RETRIES)
+        return render(self.request, 'movie_response.html', {'data': data})
+
+
 @method_decorator(login_required, name='dispatch')
 class FavouriteMoviesList(ListView):
-    model = FavouriteMovie
+    model = Movie
     context_object_name = 'movies'
 
 
 @login_required()
-def show_movie_details_view(request):
+def add_to_list(request):
+    data = request.GET.get('data')
     if request.method == 'POST':
-        form = SearchMovieForm(request.POST)
-        if form.is_valid():
-            payload = {'apikey': settings.OMDBAPI_KEY, 't': form.cleaned_data['title']}
-            attempt_num = 0
-            while attempt_num < MAX_RETRIES:
-                r = requests.get(settings.OMDBAPI_URL, params=payload, timeout=10)
-                if r.status_code == 200:
-                    data = r.json()
-                    if data.get('Response') == 'True':
-                        form = MovieResult(initial=data)
-                    elif data.get('Response') == 'False':
-                        form = ''
-                    return render(request, 'movie_response.html', {'data': data, 'form': form})
-
-                else:
-                    attempt_num += 1
-                    time.sleep(3)
-            return Response({"error": "Requests failed"}, status=r.status_code)
-    else:
-        return Response({"error": "Method not allowed"}, status=status.HTTP_400_BAD_REQUEST)
+        print('the data == ', data)
+        form = MovieForm(initial=data)
+        print('the form == ', form)
+        favourite_movie = form.save(commit=False)
+        favourite_movie.Title = data.get('Title')
+        favourite_movie.save()

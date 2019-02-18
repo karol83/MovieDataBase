@@ -1,9 +1,10 @@
 from rest_framework import serializers
 
-from .models import FavouriteMovie
+from .models import Movie, Ratings
 
 
-class MovieSerializer(serializers.ModelSerializer):
+class RatingsSerializer(serializers.ModelSerializer):
     class Meta:
-        model = FavouriteMovie
+        model = Ratings
         fields = '__all__'
+

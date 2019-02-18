@@ -7,7 +7,7 @@ from django.views import defaults as default_views
 from movies import views
 
 urlpatterns = [
-    path("", views.home, name="home"),
+    path("", views.FileSearchView.as_view(), name="home"),
     path(
         "favourites/",
         views.FavouriteMoviesList.as_view(),
@@ -16,10 +16,11 @@ urlpatterns = [
         "about/",
         TemplateView.as_view(template_name="pages/about.html"),
         name="about"),
+
     path(
-        "result/",
-        views.show_movie_details_view,
-        name="omdb_api"),
+        "add_favourite/",
+        views.add_to_list,
+        name="add_favourite"),
     # Django Admin, use {% url 'admin:index' %}
     path(settings.ADMIN_URL, admin.site.urls),
     # User management
