@@ -22,7 +22,7 @@ class Movie(models.Model):
                 data = r.json()
                 if data.get('Response') == 'True':
                     movie = Movie.objects.get_or_create(title=data.get('Title'), data=data)
-                    return data
+                    return data, movie
             if r.status_code == 401:
                 attempt_number += 1
                 print('I cannot login - please check your KEY settings')

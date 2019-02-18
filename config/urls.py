@@ -18,7 +18,7 @@ urlpatterns = [
         name="about"),
 
     path(
-        "add_favourite/",
+        "add_favourite/<favourite>/",
         views.add_to_list,
         name="add_favourite"),
     # Django Admin, use {% url 'admin:index' %}

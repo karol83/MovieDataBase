@@ -24,8 +24,9 @@ class FileSearchView(LoginRequiredMixin, FormView):
 
     def form_valid(self, movie_form):
         movie = Movie()
-        data = movie.get_movie_from_api(title=movie_form.cleaned_data['title'], max_retries=MAX_RETRIES)
-        return render(self.request, 'movie_response.html', {'data': data})
+        data, (movie, _) = movie.get_movie_from_api(title=movie_form.cleaned_data['title'], max_retries=MAX_RETRIES)
+        print('the movie variable == ', movie)
+        return render(self.request, 'movie_response.html', {'data': data, 'movie': movie})
 
 
 @method_decorator(login_required, name='dispatch')
@@ -33,14 +34,13 @@ class FavouriteMoviesList(ListView):
     model = Movie
     context_object_name = 'movies'
 
+    def get_queryset(self):
+        queryset = Movie.objects.filter(title=self.request.user__favourite_movies)
+        return queryset
 
 @login_required()
-def add_to_list(request):
-    data = request.GET.get('data')
-    if request.method == 'POST':
-        print('the data == ', data)
-        form = MovieForm(initial=data)
-        print('the form == ', form)
-        favourite_movie = form.save(commit=False)
-        favourite_movie.Title = data.get('Title')
-        favourite_movie.save()
+def add_to_list(request, favourite):
+    print('receited the favoutire movie: ', favourite)
+    movie = Movie.objects.get(title=favourite)
+    request.user.favourite_movies.add(movie)
+    return render(request, "movie_list.html")

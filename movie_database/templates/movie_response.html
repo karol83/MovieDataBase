@@ -4,10 +4,10 @@
 {% load static %}
 
 {% block content %}
-  <form action="{% url 'add_favourite' %}" method="post">
+  <form action="{% url 'add_favourite' favourite=movie%}" method="post">
   {% csrf_token %}
   <a href="{% url 'home' %}" class="btn btn-primary btn-sm" ><i class="fas fa-angle-left"></i> {% trans 'Back to search' %}</a>
-  <button href="{% url 'add_favourite'%}" type="submit" class="btn btn-success btn-sm" id="addToFavouriteButton"><i class="far fa-star"></i> {% trans 'Add to favourites' %} </button>
+  <button href="{% url 'add_favourite' favourite=movie%}" type="submit" class="btn btn-success btn-sm" id="addToFavouriteButton"><i class="far fa-star"></i> {% trans 'Add to favourites' %} </button>
   <br>
   <br>
   {% if data %}
