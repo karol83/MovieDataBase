@@ -20,8 +20,14 @@
         <div class="col">
           {% if key == 'Website' %}
             {{ item|urlize }}
-            {% elif key == 'Poster' %}
+          {% elif key == 'Poster' %}
             <img src="{{ item }}">
+          {% elif key == 'Ratings' %}
+            {% for v in item %}
+              {% for source, value in v.items %}
+                {{ value }}{% cycle ':' '<br>' %}
+              {% endfor %}
+            {% endfor %}
           {% else %}
             {{ item }}
           {% endif %}
