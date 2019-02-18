@@ -11,7 +11,7 @@
   <br>
   <br>
   {% if data %}
-    <h1>{{ data.Title }}</h1>
+    <h1>{{ data.Title }} <small>({{ data.Year }})</small></h1>
     {% for key, item in data.items %}
       <div class="row">
         <div class="col-1">
