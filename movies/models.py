@@ -4,6 +4,7 @@ from django.db import models
 from django.utils.translation import gettext as _
 from django.contrib.postgres.fields import JSONField
 from django.conf import settings
+from django.urls import reverse
 
 
 class Movie(models.Model):
@@ -11,6 +12,7 @@ class Movie(models.Model):
     data = JSONField(null=True)
     movie_added_on_datetime = models.DateTimeField(auto_now_add=True)
     movie_last_accessed_datetime = models.DateTimeField(auto_now=True)
+    favourite_move = models.ManyToManyField(settings.AUTH_USER_MODEL)
 
     @classmethod
     def get_movie_from_api(cls, title, max_retries):
@@ -29,6 +31,10 @@ class Movie(models.Model):
             else:
                 print('There was a problem with fetching the movie!')
                 attempt_number += 1
+                return None, ("", "")
 
     def __str__(self):
         return "%s" % self.title
+
+    def get_absolute_url(self):
+        return reverse('movie_details', args=[str(self.id)])

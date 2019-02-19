@@ -1,7 +1,7 @@
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormView
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
@@ -29,18 +29,29 @@ class FileSearchView(LoginRequiredMixin, FormView):
         return render(self.request, 'movie_response.html', {'data': data, 'movie': movie})
 
 
+class MovieDetailView(LoginRequiredMixin, DetailView):
+    context_object_name = 'movie'
+    queryset = Movie.objects.all()
+
+
 @method_decorator(login_required, name='dispatch')
 class FavouriteMoviesList(ListView):
     model = Movie
     context_object_name = 'movies'
+    # queryset = Movie.objects.all()
 
     def get_queryset(self):
-        queryset = Movie.objects.filter(title=self.request.user__favourite_movies)
+        this_user = self.request.user
+        print('the current user is:', this_user)
+        queryset = this_user.movie_set.all()
+        print('the questyset is :', queryset)
         return queryset
+
 
 @login_required()
 def add_to_list(request, favourite):
     print('receited the favoutire movie: ', favourite)
     movie = Movie.objects.get(title=favourite)
-    request.user.favourite_movies.add(movie)
-    return render(request, "movie_list.html")
+    add_to_favourite = movie.favourite_move.add(request.user)
+    print(add_to_favourite)
+    return render(request, "favourite_added.html")

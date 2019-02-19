@@ -1,5 +1,10 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
 {% block content %}
-  Your favourite movies will be shown here!
+  <h1>{% trans 'Your favourite movies:' %}</h1>
+
+    {% for movie in movies %}
+      <a href="{{ movie.get_absolute_url }}">{{ movie }}</a><br>
+    {% endfor %}
 {% endblock %}

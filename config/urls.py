@@ -21,6 +21,10 @@ urlpatterns = [
         "add_favourite/<favourite>/",
         views.add_to_list,
         name="add_favourite"),
+    path(
+        "movie/<int:pk>/",
+        views.MovieDetailView.as_view(),
+        name="movie_details"),
     # Django Admin, use {% url 'admin:index' %}
     path(settings.ADMIN_URL, admin.site.urls),
     # User management
