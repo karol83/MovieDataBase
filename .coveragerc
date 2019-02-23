@@ -1,5 +1,5 @@
 [run]
-include = movie_database/*
+include = movie_database/*, movies/*
 omit = *migrations*, *tests*
 plugins =
     django_coverage_plugin

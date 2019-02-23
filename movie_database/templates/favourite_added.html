@@ -2,4 +2,8 @@
 
 {% block content %}
   Your movie has been added!
+  <br>
+  <br>
+  Go back to <a href="{% url 'home' %}">search for another movie</a> or have <a href="{% url 'list_of_favourites' %}">a look at the list
+  of your favourite movies</a>.
 {% endblock %}

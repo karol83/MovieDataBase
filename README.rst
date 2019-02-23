@@ -3,6 +3,12 @@ Movie Database
 
 Best Way to find your next movie!
 
+Search the openIMDB API in a REST manner for movies, add your favourite ones to your list!
+
+The project can be run locally in docker using. This project is built based on Django and Django-Cookiecutter.
+
+
+
 .. image:: https://img.shields.io/badge/built%20with-Cookiecutter%20Django-ff69b4.svg
      :target: https://github.com/pydanny/cookiecutter-django/
      :alt: Built with Cookiecutter Django

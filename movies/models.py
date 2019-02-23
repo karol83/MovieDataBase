@@ -1,7 +1,6 @@
 import requests
 
 from django.db import models
-from django.utils.translation import gettext as _
 from django.contrib.postgres.fields import JSONField
 from django.conf import settings
 from django.urls import reverse
