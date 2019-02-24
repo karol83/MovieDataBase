@@ -1,13 +1,14 @@
 import factory
 import json
 
-from django.test import TestCase
+from django.test import TestCase, Client
 from django.urls import reverse
 from django.test import RequestFactory
 from django.contrib.auth.models import AnonymousUser
 
 from movies.models import Movie
 from movies.views import home
+from movies.forms import SearchMovieForm
 from movie_database.users.models import User
 
 
@@ -30,11 +31,16 @@ class FavouriteTests(TestCase):
             email='jacob@gmail.com',
             password='topsecret'
         )
+        self.client = Client()
 
     def test_home_page(self):
-        request = self.factory.get(reverse('home'))
-        request.user = self.user
-        request.user = AnonymousUser()
-
-        response = home(request)
+        self.client.force_login(user=self.user)
+        response = self.client.get(reverse('home'))
         self.assertEqual(response.status_code, 200)
+        self.assertIsInstance(response.context['form'], SearchMovieForm)
+        self.assertTemplateUsed(response, template_name="pages/home.html")
+
+    def test_home_page_form(self):
+        data = {'title': 'Spiderman'}
+        form = SearchMovieForm(data=data)
+        self.assertTrue(form.is_valid())
